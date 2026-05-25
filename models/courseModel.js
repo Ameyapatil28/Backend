@@ -46,6 +46,19 @@ const CourseModel = {
             [id]
         );
         return result.affectedRows > 0;
+    },
+
+    // Find all students enrolled in a specific course using SQL JOIN
+    async findCourseRoster(courseId) {
+        const [rows] = await db.query(
+            `SELECT c.course_id, c.course_name, c.course_code, c.course_duration,
+                    s.student_id, s.student_name, s.email
+             FROM courses c
+             LEFT JOIN students s ON s.course_id = c.course_id AND s.role = 'student'
+             WHERE c.course_id = ?`,
+            [courseId]
+        );
+        return rows;
     }
 };
 

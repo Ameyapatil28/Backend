@@ -2,15 +2,15 @@ const db = require("../config/db");
 const bcrypt = require("bcryptjs");
 
 const UserModel = {
-    // Create new user (Student or Admin) inside the students table
-    async create({ name, email, password, role }) {
+    // Create new user (Student or Admin) inside the students table, optionally with a course_id
+    async create({ name, email, password, role, course_id }) {
         // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const [result] = await db.query(
-            "INSERT INTO students (student_name, email, password, role) VALUES (?, ?, ?, ?)",
-            [name, email, hashedPassword, role || "student"]
+            "INSERT INTO students (student_name, email, password, role, course_id) VALUES (?, ?, ?, ?, ?)",
+            [name, email, hashedPassword, role || "student", course_id || null]
         );
         return result.insertId;
     },
@@ -27,13 +27,49 @@ const UserModel = {
     // Find user by student_id (joining course if student)
     async findById(id) {
         const [rows] = await db.query(
-            `SELECT s.student_id, s.student_name, s.email, s.role, s.course_id, c.course_name 
+            `SELECT s.student_id, s.student_name, s.email, s.role, s.course_id, 
+                    c.course_name, c.course_code, c.course_duration
              FROM students s 
              LEFT JOIN courses c ON s.course_id = c.course_id 
              WHERE s.student_id = ?`,
             [id]
         );
         return rows[0];
+    },
+
+    // Find all users (filter optional by role) with full course columns
+    async findAll(role = null) {
+        let query = `
+            SELECT s.student_id, s.student_name, s.email, s.role, s.course_id, 
+                   c.course_name, c.course_code, c.course_duration
+            FROM students s 
+            LEFT JOIN courses c ON s.course_id = c.course_id
+        `;
+        const params = [];
+        if (role) {
+            query += " WHERE s.role = ?";
+            params.push(role);
+        }
+        const [rows] = await db.query(query, params);
+        return rows;
+    },
+
+    // Update student details
+    async update(id, { name, email, role, course_id }) {
+        const [result] = await db.query(
+            "UPDATE students SET student_name = ?, email = ?, role = ?, course_id = ? WHERE student_id = ?",
+            [name, email, role, course_id || null, id]
+        );
+        return result.affectedRows > 0;
+    },
+
+    // Delete student
+    async delete(id) {
+        const [result] = await db.query(
+            "DELETE FROM students WHERE student_id = ?",
+            [id]
+        );
+        return result.affectedRows > 0;
     },
 
     // Enroll a student in a course (update course_id)

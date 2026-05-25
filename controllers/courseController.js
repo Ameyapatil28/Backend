@@ -152,25 +152,41 @@ const courseController = {
         }
     },
 
-    // @desc    Get all students enrolled in a specific course
+    // @desc    Get all students enrolled in a specific course (using optimized SQL JOIN)
     // @route   GET /api/courses/:id/students
     // @access  Private (Admin only)
     async getCourseStudents(req, res) {
         const courseId = req.params.id;
 
         try {
-            // Verify course exists
-            const course = await CourseModel.findById(courseId);
-            if (!course) {
+            // Retrieve roster using optimized JOIN query
+            const rows = await CourseModel.findCourseRoster(courseId);
+
+            if (rows.length === 0) {
                 return res.status(404).json({ message: "Course not found" });
             }
 
-            // Get students
-            const students = await UserModel.findStudentsByCourse(courseId);
+            // Extract course info from first row
+            const firstRow = rows[0];
+            const courseDetails = {
+                course_id: firstRow.course_id,
+                course_name: firstRow.course_name,
+                course_code: firstRow.course_code,
+                course_duration: firstRow.course_duration
+            };
+
+            // Build student list (filtering out nulls if course has no students)
+            const students = rows
+                .filter(row => row.student_id !== null)
+                .map(row => ({
+                    student_id: row.student_id,
+                    student_name: row.student_name,
+                    email: row.email
+                }));
+
             res.json({
-                courseId: Number(courseId),
-                courseTitle: course.course_name,
-                studentCount: students.length,
+                ...courseDetails,
+                student_count: students.length,
                 students
             });
         } catch (error) {

@@ -17,9 +17,11 @@ app.use(express.json());
 // Routes Placeholders (will import actual routes next)
 const authRoutes = require("./routes/authRoutes");
 const courseRoutes = require("./routes/courseRoutes");
+const studentRoutes = require("./routes/studentRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/students", studentRoutes);
 
 app.get("/", (req, res) => {
     res.send("Student & Course Management API Running");

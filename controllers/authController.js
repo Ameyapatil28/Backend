@@ -1,4 +1,5 @@
 const UserModel = require("../models/userModel");
+const CourseModel = require("../models/courseModel");
 const jwt = require("jsonwebtoken");
 
 // Generate JWT token helper
@@ -13,7 +14,8 @@ const authController = {
     // @route   POST /api/auth/register
     // @access  Public
     async register(req, res) {
-        const { name, email, password, role } = req.body;
+        const name = req.body.name || req.body.student_name;
+        const { email, password, role, course_id } = req.body;
 
         if (!name || !email || !password) {
             return res.status(400).json({ message: "Please enter all required fields" });
@@ -42,12 +44,21 @@ const authController = {
                 return res.status(400).json({ message: "User already exists with this email" });
             }
 
+            // Validate if course exists before assigning
+            if (course_id) {
+                const course = await CourseModel.findById(course_id);
+                if (!course) {
+                    return res.status(400).json({ message: `Course with ID '${course_id}' does not exist` });
+                }
+            }
+
             // Create user
             const studentId = await UserModel.create({
                 name,
                 email,
                 password,
-                role: role || "student"
+                role: role || "student",
+                course_id: course_id || null
             });
 
             // Return user details and token

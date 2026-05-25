@@ -3,9 +3,9 @@ const router = express.Router();
 const courseController = require("../controllers/courseController");
 const { protect, authorize } = require("../middleware/authMiddleware");
 
-// Get all courses & course details (Available to both Admin and Student)
-router.get("/", protect, courseController.getAllCourses);
-router.get("/:id", protect, courseController.getCourseById);
+// Get all courses & course details (Admin only)
+router.get("/", protect, authorize("admin"), courseController.getAllCourses);
+router.get("/:id", protect, authorize("admin"), courseController.getCourseById);
 
 // Create, Update, Delete courses (Admin only)
 router.post("/", protect, authorize("admin"), courseController.createCourse);
