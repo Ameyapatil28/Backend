@@ -1,0 +1,155 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "Student & Course Management API",
+  "dateExported": "2026-05-25T13:00:00.000Z",
+  "version": "1.1",
+  "folders": [
+    {
+      "_id": "fol_auth",
+      "name": "Authentication",
+      "sortNum": 10000
+    },
+    {
+      "_id": "fol_courses",
+      "name": "Courses",
+      "sortNum": 20000
+    }
+  ],
+  "requests": [
+    {
+      "_id": "req_reg_admin",
+      "colId": "col_student_course",
+      "containerId": "fol_auth",
+      "name": "1. Register Admin",
+      "url": "http://localhost:5000/api/auth/register",
+      "method": "POST",
+      "sortNum": 10000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin_thunder@example.com\",\n  \"password\": \"adminpass123\",\n  \"role\": \"admin\"\n}"
+      }
+    },
+    {
+      "_id": "req_login_admin",
+      "colId": "col_student_course",
+      "containerId": "fol_auth",
+      "name": "2. Login Admin",
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "sortNum": 20000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"admin_thunder@example.com\",\n  \"password\": \"adminpass123\"\n}"
+      }
+    },
+    {
+      "_id": "req_reg_student",
+      "colId": "col_student_course",
+      "containerId": "fol_auth",
+      "name": "3. Register Student",
+      "url": "http://localhost:5000/api/auth/register",
+      "method": "POST",
+      "sortNum": 30000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Jane Doe\",\n  \"email\": \"student_thunder@example.com\",\n  \"password\": \"studentpass123\",\n  \"role\": \"student\"\n}"
+      }
+    },
+    {
+      "_id": "req_login_student",
+      "colId": "col_student_course",
+      "containerId": "fol_auth",
+      "name": "4. Login Student",
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "sortNum": 40000,
+      "headers": [],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"student_thunder@example.com\",\n  \"password\": \"studentpass123\"\n}"
+      }
+    },
+    {
+      "_id": "req_get_profile",
+      "colId": "col_student_course",
+      "containerId": "fol_auth",
+      "name": "5. Get Profile",
+      "url": "http://localhost:5000/api/auth/profile",
+      "method": "GET",
+      "sortNum": 50000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer <YOUR_JWT_TOKEN_HERE>"
+        }
+      ]
+    },
+    {
+      "_id": "req_create_course",
+      "colId": "col_student_course",
+      "containerId": "fol_courses",
+      "name": "1. Create Course (Admin Only)",
+      "url": "http://localhost:5000/api/courses",
+      "method": "POST",
+      "sortNum": 10000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer <YOUR_ADMIN_JWT_TOKEN_HERE>"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Advanced Database Systems\",\n  \"code\": \"CS-302\",\n  \"duration\": 60\n}"
+      }
+    },
+    {
+      "_id": "req_get_courses",
+      "colId": "col_student_course",
+      "containerId": "fol_courses",
+      "name": "2. Get All Courses",
+      "url": "http://localhost:5000/api/courses",
+      "method": "GET",
+      "sortNum": 20000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer <YOUR_JWT_TOKEN_HERE>"
+        }
+      ]
+    },
+    {
+      "_id": "req_enroll_course",
+      "colId": "col_student_course",
+      "containerId": "fol_courses",
+      "name": "3. Enroll in Course (Student Only)",
+      "url": "http://localhost:5000/api/courses/1/enroll",
+      "method": "POST",
+      "sortNum": 30000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer <YOUR_STUDENT_JWT_TOKEN_HERE>"
+        }
+      ]
+    },
+    {
+      "_id": "req_get_roster",
+      "colId": "col_student_course",
+      "containerId": "fol_courses",
+      "name": "4. Get Course Roster (Admin Only)",
+      "url": "http://localhost:5000/api/courses/1/students",
+      "method": "GET",
+      "sortNum": 40000,
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer <YOUR_ADMIN_JWT_TOKEN_HERE>"
+        }
+      ]
+    }
+  ]
+}
